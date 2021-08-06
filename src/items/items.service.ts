@@ -7,10 +7,7 @@ import { ItemDTO } from './item.dto';
 
 @Injectable()
 export class ItemsService {
-    constructor(
-    @InjectRepository(ItemEntity)
-    private itemsRepository: Repository<ItemEntity>,
-    ) {}
+constructor(@InjectRepository(ItemEntity) private itemsRepository: Repository<ItemEntity>){}
 
     async showAll() {
     return await this.itemsRepository.find();
