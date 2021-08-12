@@ -4,40 +4,33 @@ import { Repository } from 'typeorm';
 
 import { ItemEntity } from './item.entity';
 import { ItemDTO } from './item.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ItemsService {
-constructor(@InjectRepository(ItemEntity) private itemsRepository: Repository<ItemEntity>){}
+    constructor(@InjectRepository(ItemEntity) private itemsRepository: Repository<ItemEntity>,){}
 
-    async showAll() {
-    return await this.itemsRepository.find();
+    async showAll(): Promise<ItemEntity[]>  {
+        return await this.itemsRepository.find({ relations: ['user']});
     }
 
-    async create(data: ItemDTO) {
-    const user = this.itemsRepository.create(data);
-    await this.itemsRepository.save(data);
-    return user;
-    }
-
-    async findByEmail(email: string): Promise<ItemDTO> {
-    return await this.itemsRepository.findOne({
-        where: {
-        email: email,
-        },
-    });
+    async create(data: ItemDTO, user: User) {
+        const newUser = await this.itemsRepository.create({ ...data, user: user});
+        await this.itemsRepository.save(newUser);
+        return newUser;
     }
 
     async read(id: number) {
-    return await this.itemsRepository.findOne({ where: { id: id } });
+        return await this.itemsRepository.findOne(id, {relations: ['user']});
     }
 
-    async update(id: number, data: Partial<ItemDTO>) {
-    await this.itemsRepository.update({ id }, data);
-    return await this.itemsRepository.findOne({ id });
+    async update(id: number, data: ItemDTO) {
+        await this.itemsRepository.update({ id }, data);
+        return await this.itemsRepository.findOne(id, {relations: ['user']});
     }
 
     async destroy(id: number) {
-    await this.itemsRepository.delete({ id });
-    return { deleted: true };
+        await this.itemsRepository.delete({ id });
+        return { deleted: true };
     }
 }

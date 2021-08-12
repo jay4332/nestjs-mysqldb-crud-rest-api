@@ -3,4 +3,5 @@ export interface ItemDTO {
     name: string;
     qty: number;
     description: string;
+    userId: number;
   }
