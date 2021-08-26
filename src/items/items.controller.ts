@@ -30,11 +30,11 @@ export class ItemsController {
 
       @Get(':id')
       async readItem(@Param('id') id: number) {
-        const item =  await this.itemsService.read(id);
+        const items =  await this.itemsService.read(id);
         return {
           statusCode: HttpStatus.OK,
           message: 'Item fetched successfully',
-          item,
+          items,
         };
       }
 
